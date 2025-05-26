@@ -1,0 +1,43 @@
+import React from "react";
+
+function MovieCard({
+  movie: { title, vote_average, poster_path, release_date, original_language },
+}) {
+  return (
+    <div className="movie-card">
+      <img
+        src={
+          poster_path
+            ? `https://image.tmdb.org/t/p/w500/${poster_path}`
+            : `/no-movie.png`
+        }
+        alt={title}
+      />
+
+      <div className="mt-4">
+        <h3>{title}</h3>
+
+        <div className="content">
+          <div className="rating flex">
+            <img src="star.svg" alt="Star Icon" />
+            <p className="text-white">
+              {vote_average ? vote_average.toFixed(1) : "N/A"}
+            </p>
+          </div>
+
+          <span>-</span>
+          <p className="lang">{original_language}</p>
+          <span>-</span>
+          <p className="year">
+            {release_date ? release_date.split("-")[0] : "N/A"}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default MovieCard;
+
+// @ 1:26:24 youtube vide timing
+// @ 1:30:12 search bar programming
