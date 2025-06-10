@@ -38,6 +38,3 @@ function MovieCard({
 }
 
 export default MovieCard;
-
-// @ 1:26:24 youtube vide timing
-// @ 1:30:12 search bar programming
