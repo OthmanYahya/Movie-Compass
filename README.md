@@ -6,14 +6,13 @@ Movie Compass is a sleek, responsive web app that lets users search for movies, 
 
 ## 📸 Screenshot
 
-> ![Screenshot of Movie Compass](https://github.com/OthmanYahya/Movie-Compass/blob/main/Movie%20Compass.png)  
-> _Drop your actual screenshot in this repo and name it `screenshot.png`_
+> ![Screenshot of Movie Compass](https://github.com/OthmanYahya/Movie-Compass/blob/main/Movie%20Compass.png)
 
 ---
 
 ## 🚀 Features
 
-- 🔍 **Search Movies:** Look up any movie with real-time search and debounce optimization.
+- 🔍 **Search Movies:** Look up any movie with real-time search and **debounce optimization**.
 - 📈 **Trending Section:** Displays trending movies using data from your Appwrite backend.
 - 🎞️ **Movie Details:** Shows movie title, rating, language, and release year in a modern card UI.
 - ⚡ **Fast & Responsive UI:** Built with React and TailwindCSS for smooth performance and mobile-first design.
@@ -30,3 +29,24 @@ Movie Compass is a sleek, responsive web app that lets users search for movies, 
 ---
 
 ## 📂 Project Structure
+
+.
+├── public/
+│ ├── hero.png
+│ ├── search.svg
+│ ├── star.svg
+│ ├── no-movie.png
+│ └── index.html
+├── src/
+│ ├── components/
+│ │ ├── LoadingIndicator.jsx
+│ │ ├── MovieCard.jsx
+│ │ └── Search.jsx
+│ ├── App.jsx
+│ ├── appwrite.js
+│ ├── index.css
+│ └── main.jsx
+├── .env
+├── package.json
+├── tailwind.config.js
+└── vite.config.js
