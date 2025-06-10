@@ -30,7 +30,7 @@ Movie Compass is a sleek, responsive web app that lets users search for movies, 
 
 ## 📂 Project Structure
 
-.
+```.
 ├── public/
 │ ├── hero.png
 │ ├── search.svg
@@ -50,3 +50,4 @@ Movie Compass is a sleek, responsive web app that lets users search for movies, 
 ├── package.json
 ├── tailwind.config.js
 └── vite.config.js
+```
