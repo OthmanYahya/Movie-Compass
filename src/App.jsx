@@ -3,31 +3,35 @@ import Search from "./components/Search";
 import LoadingIndicator from "./components/LoadingIndicator";
 import MovieCard from "./components/MovieCard";
 import { useDebounce } from "react-use";
+// Correct variable name for the error state setter
+import { updateSearchCount, getTrendingMovies } from "./appwrite.js";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 const API_OPTIONS = {
-  method: "GET", // HTTP method for requesting the data
+  method: "GET",
   headers: {
-    accept: "application/json", // Client's response preference "JSON"
+    accept: "application/json",
     Authorization: `Bearer ${API_KEY}`,
   },
 };
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // Default to empty string for no error
+  const [trendingError, setTrendingError] = useState(""); // Renamed for consistency
   const [moviesList, setMoviesList] = useState([]);
+  const [trendingMovies, setTrendingMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  useDebounce(() => setDebouncedSearchTerm(searchTerm), 750, [searchTerm]);
+  useDebounce(() => setDebouncedSearchTerm(searchTerm), 1000, [searchTerm]);
 
   const fetchMovies = async (query = "") => {
     setIsLoading(true);
-    setErrorMessage("");
+    setErrorMessage(""); // Clear previous errors
+    // No need to clear trendingError here, it's for a different section
 
-    // Fetching the data from the api and dealing with api errors
     try {
       const endpoint = query
         ? `${API_BASE_URL}/search/movie?include_adult=false&query=${encodeURIComponent(
@@ -42,7 +46,6 @@ function App() {
 
       const data = await response.json();
 
-      // Checks for specific error responses from the API.
       if (data.Response === "False") {
         setErrorMessage(data.Error || "Failed to fetch movies");
         setMoviesList([]);
@@ -50,8 +53,11 @@ function App() {
       }
 
       setMoviesList(data.results || []);
+
+      if (query && data.results.length > 0) {
+        await updateSearchCount(query, data.results[0]);
+      }
     } catch (error) {
-      // Checking if there is a network/server error
       console.error("Error fetching movies:", error);
       setErrorMessage(
         error.message || "Network error or problem reaching the server"
@@ -61,9 +67,25 @@ function App() {
     }
   };
 
+  const loadTrendingMovies = async () => {
+    try {
+      const movies = await getTrendingMovies(); // This function now throws errors
+      setTrendingMovies(movies);
+      setTrendingError(""); // Clear any previous trending errors on success
+    } catch (error) {
+      console.error("Error loading trending movies:", error);
+      // Set the trending error state here, because appwrite.js now throws it.
+      setTrendingError(error.message || "Failed to load trending movies.");
+    }
+  };
+
   useEffect(() => {
     fetchMovies(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
+
+  useEffect(() => {
+    loadTrendingMovies();
+  }, []);
 
   return (
     <main>
@@ -79,10 +101,30 @@ function App() {
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </header>
 
-        <section className="all-movies">
-          <h2 className="mt-[40px]">All Movies</h2>
+        {trendingError ? ( // If there's a trending error, display it
+          <p className="text-red-500">{trendingError}</p>
+        ) : trendingMovies.length > 0 ? ( // Otherwise, if there are trending movies, display them
+          <section className="trending">
+            <h2>Trending Movies</h2>
+            <ul>
+              {trendingMovies.map((movie, index) => (
+                <li key={movie.$id}>
+                  <p>{index + 1}</p>
+                  <img src={movie.poster_url} alt={movie.title} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : (
+          <>
+            <p className="text-gray-500">Loading trending movies...</p>
+            <LoadingIndicator />
+          </>
+        )}
 
-          {/* conditional rendering @1:19:40 */}
+        <section className="all-movies">
+          <h2>All Movies</h2>
+
           {isLoading ? (
             <p className="text-white">{<LoadingIndicator />}</p>
           ) : errorMessage ? (
